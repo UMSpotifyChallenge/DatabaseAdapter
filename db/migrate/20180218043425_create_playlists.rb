@@ -9,7 +9,8 @@ class CreatePlaylists < ActiveRecord::Migration[5.1]
       t.integer :num_followers
       t.integer :num_edits
       t.integer :duration_ms
-      t.integerdescription :num_artists
+      t.integer :num_artists
+      t.text :description
 
       t.timestamps
     end

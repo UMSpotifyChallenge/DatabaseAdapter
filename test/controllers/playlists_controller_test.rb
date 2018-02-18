@@ -17,7 +17,7 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create playlist" do
     assert_difference('Playlist.count') do
-      post playlists_url, params: { playlist: { collaborative: @playlist.collaborative, duration_ms: @playlist.duration_ms, modified_at: @playlist.modified_at, name: @playlist.name, num_albums: @playlist.num_albums, num_artists: @playlist.num_artists, num_edits: @playlist.num_edits, num_followers: @playlist.num_followers, num_tracks: @playlist.num_tracks } }
+      post playlists_url, params: { playlist: { collaborative: @playlist.collaborative, description: @playlist.description, duration_ms: @playlist.duration_ms, modified_at: @playlist.modified_at, name: @playlist.name, num_albums: @playlist.num_albums, num_artists: @playlist.num_artists, num_edits: @playlist.num_edits, num_followers: @playlist.num_followers, num_tracks: @playlist.num_tracks } }
     end
 
     assert_redirected_to playlist_url(Playlist.last)
@@ -34,7 +34,7 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update playlist" do
-    patch playlist_url(@playlist), params: { playlist: { collaborative: @playlist.collaborative, duration_ms: @playlist.duration_ms, modified_at: @playlist.modified_at, name: @playlist.name, num_albums: @playlist.num_albums, num_artists: @playlist.num_artists, num_edits: @playlist.num_edits, num_followers: @playlist.num_followers, num_tracks: @playlist.num_tracks } }
+    patch playlist_url(@playlist), params: { playlist: { collaborative: @playlist.collaborative, description: @playlist.description, duration_ms: @playlist.duration_ms, modified_at: @playlist.modified_at, name: @playlist.name, num_albums: @playlist.num_albums, num_artists: @playlist.num_artists, num_edits: @playlist.num_edits, num_followers: @playlist.num_followers, num_tracks: @playlist.num_tracks } }
     assert_redirected_to playlist_url(@playlist)
   end
 

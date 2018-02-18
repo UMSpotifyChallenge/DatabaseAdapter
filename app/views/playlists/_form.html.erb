@@ -53,7 +53,12 @@
 
   <div class="field">
     <%= form.label :num_artists %>
-    <%= form.text_field :num_artists, id: :playlist_num_artists %>
+    <%= form.number_field :num_artists, id: :playlist_num_artists %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description, id: :playlist_description %>
   </div>
 
   <div class="actions">

@@ -10,21 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180218032909) do
+ActiveRecord::Schema.define(version: 20180218043425) do
+
+  create_table "includes", force: :cascade do |t|
+    t.integer "playlist_id"
+    t.integer "track_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "playlists", force: :cascade do |t|
     t.string "name"
     t.boolean "collaborative"
     t.datetime "modified_at"
+    t.integer "num_tracks"
     t.integer "num_albums"
     t.integer "num_followers"
     t.integer "num_edits"
     t.integer "duration_ms"
     t.integer "num_artists"
-    t.integer "num_tracks"
-    t.string "description"
+    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "tracks", force: :cascade do |t|
+    t.string "track_name"
+    t.string "artist_name"
+    t.string "album_name"
+    t.string "track_uri"
+    t.string "artist_uri"
+    t.string "album_uri"
+    t.integer "duration_ms"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["track_uri"], name: "index_tracks_on_track_uri", unique: true
   end
 
 end
