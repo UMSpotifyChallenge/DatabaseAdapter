@@ -1,0 +1,2 @@
+class Include < ApplicationRecord
+end
