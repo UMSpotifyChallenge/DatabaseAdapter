@@ -10,6 +10,8 @@ class PlaylistsController < ApplicationController
   # GET /playlists/1
   # GET /playlists/1.json
   def show
+    @playlist = Playlist.find(params[:id])
+    @tracks = @playlist.tracks
   end
 
   # GET /playlists/new
