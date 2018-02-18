@@ -1,0 +1,62 @@
+<%= form_with(model: playlist, local: true) do |form| %>
+  <% if playlist.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(playlist.errors.count, "error") %> prohibited this playlist from being saved:</h2>
+
+      <ul>
+      <% playlist.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :playlist_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :collaborative %>
+    <%= form.check_box :collaborative, id: :playlist_collaborative %>
+  </div>
+
+  <div class="field">
+    <%= form.label :modified_at %>
+    <%= form.datetime_select :modified_at, id: :playlist_modified_at %>
+  </div>
+
+  <div class="field">
+    <%= form.label :num_tracks %>
+    <%= form.number_field :num_tracks, id: :playlist_num_tracks %>
+  </div>
+
+  <div class="field">
+    <%= form.label :num_albums %>
+    <%= form.number_field :num_albums, id: :playlist_num_albums %>
+  </div>
+
+  <div class="field">
+    <%= form.label :num_followers %>
+    <%= form.number_field :num_followers, id: :playlist_num_followers %>
+  </div>
+
+  <div class="field">
+    <%= form.label :num_edits %>
+    <%= form.number_field :num_edits, id: :playlist_num_edits %>
+  </div>
+
+  <div class="field">
+    <%= form.label :duration_ms %>
+    <%= form.number_field :duration_ms, id: :playlist_duration_ms %>
+  </div>
+
+  <div class="field">
+    <%= form.label :num_artists %>
+    <%= form.text_field :num_artists, id: :playlist_num_artists %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

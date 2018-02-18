@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  collaborative: false
+  modified_at: 2018-02-17 23:18:31
+  num_tracks: 1
+  num_albums: 1
+  num_followers: 1
+  num_edits: 1
+  duration_ms: 1
+  num_artists: 
+
+two:
+  name: MyString
+  collaborative: false
+  modified_at: 2018-02-17 23:18:31
+  num_tracks: 1
+  num_albums: 1
+  num_followers: 1
+  num_edits: 1
+  duration_ms: 1
+  num_artists: 

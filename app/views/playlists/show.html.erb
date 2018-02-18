@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @playlist.name %>
+</p>
+
+<p>
+  <strong>Collaborative:</strong>
+  <%= @playlist.collaborative %>
+</p>
+
+<p>
+  <strong>Modified at:</strong>
+  <%= @playlist.modified_at %>
+</p>
+
+<p>
+  <strong>Num tracks:</strong>
+  <%= @playlist.num_tracks %>
+</p>
+
+<p>
+  <strong>Num albums:</strong>
+  <%= @playlist.num_albums %>
+</p>
+
+<p>
+  <strong>Num followers:</strong>
+  <%= @playlist.num_followers %>
+</p>
+
+<p>
+  <strong>Num edits:</strong>
+  <%= @playlist.num_edits %>
+</p>
+
+<p>
+  <strong>Duration ms:</strong>
+  <%= @playlist.duration_ms %>
+</p>
+
+<p>
+  <strong>Num artists:</strong>
+  <%= @playlist.num_artists %>
+</p>
+
+<%= link_to 'Edit', edit_playlist_path(@playlist) %> |
+<%= link_to 'Back', playlists_path %>
