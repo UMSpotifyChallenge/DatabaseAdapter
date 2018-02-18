@@ -1,5 +1,5 @@
 class Include < ApplicationRecord
-    attr_accessible :playlist_id, :track_id
+    #attr_accessible :playlist_id, :track_id
     
     belongs_to :playlist, :class_name => "Playlist"
     belongs_to :track, :class_name => "Track"
