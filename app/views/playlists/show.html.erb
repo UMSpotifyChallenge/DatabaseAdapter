@@ -50,5 +50,33 @@
   <%= @playlist.description %>
 </p>
 
+<table>
+  <thead>
+    <tr>
+      <th>Track name</th>
+      <th>Artist name</th>
+      <th>Album name</th>
+      <th>Track uri</th>
+      <th>Artist uri</th>
+      <th>Album uri</th>
+      <th>Duration ms</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @tracks.each do |track| %>
+      <tr>
+        <td><%= track.track_name %></td>
+        <td><%= track.artist_name %></td>
+        <td><%= track.album_name %></td>
+        <td><%= track.track_uri %></td>
+        <td><%= track.artist_uri %></td>
+        <td><%= track.album_uri %></td>
+        <td><%= track.duration_ms %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
 <%= link_to 'Edit', edit_playlist_path(@playlist) %> |
 <%= link_to 'Back', playlists_path %>
