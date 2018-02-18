@@ -12,6 +12,11 @@
   <% end %>
 
   <div class="field">
+    <%= form.label :raw_json %>
+    <%= form.text_area :raw_json, id: :playlist_raw_json %>
+  </div>
+
+  <div class="field">
     <%= form.label :name %>
     <%= form.text_field :name, id: :playlist_name %>
   </div>

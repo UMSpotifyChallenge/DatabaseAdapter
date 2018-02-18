@@ -26,17 +26,57 @@ class PlaylistsController < ApplicationController
   # POST /playlists
   # POST /playlists.json
   def create
-    @playlist = Playlist.new(playlist_params)
+    raw_json = params[:playlist][:raw_json]
+    if raw_json != nil
+      json = JSON.parse(raw_json)
+      json.delete("pid")
+      tracks = json.delete("tracks")
+      @playlist = Playlist.new(json)
+      success = @playlist.save
+      for j in tracks
+        pos = j.delete("pos")
+        track_uri = j["track_uri"].delete("spotify:track:")
+        j["track_uri"] = track_uri
+        t = Track.find_by(track_uri: track_uri)
+        if t == nil
+          # j[:id] = j.delete("track_uri")
+          t = Track.new(j)
+          if t.save == false
+            success = false
+          end
+        else
+          puts("already stored")
+        end
 
-    respond_to do |format|
-      if @playlist.save
-        format.html { redirect_to @playlist, notice: 'Playlist was successfully created.' }
-        format.json { render :show, status: :created, location: @playlist }
-      else
-        format.html { render :new }
-        format.json { render json: @playlist.errors, status: :unprocessable_entity }
+        if Include.create(:playlist_id => @playlist.id, :track_id => t.id, :pos => pos) == false
+          success = false
+        end
+      end
+
+      respond_to do |format|
+        if success
+          format.html { redirect_to @playlist, notice: 'Playlist was successfully created.' }
+          format.json { render :show, status: :created, location: @playlist }
+        else
+          format.html { render :new }
+          format.json { render json: @playlist.errors, status: :unprocessable_entity }
+        end
+      end
+
+    else
+      @playlist = Playlist.new(playlist_params)
+
+      respond_to do |format|
+        if @playlist.save
+          format.html { redirect_to @playlist, notice: 'Playlist was successfully created.' }
+          format.json { render :show, status: :created, location: @playlist }
+        else
+          format.html { render :new }
+          format.json { render json: @playlist.errors, status: :unprocessable_entity }
+        end
       end
     end
+
   end
 
   # PATCH/PUT /playlists/1
