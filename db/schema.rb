@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 20180218051126) do
 
-  create_table "includes", force: :cascade do |t|
+  create_table "includes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "playlist_id"
     t.string "track_id"
     t.datetime "created_at", null: false
@@ -20,10 +20,10 @@ ActiveRecord::Schema.define(version: 20180218051126) do
     t.integer "pos"
   end
 
-  create_table "playlists", force: :cascade do |t|
+  create_table "playlists", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
     t.boolean "collaborative"
-    t.datetime "modified_at"
+    t.timestamp "modified_at"
     t.integer "num_tracks"
     t.integer "num_albums"
     t.integer "num_followers"
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20180218051126) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "tracks", id: false, force: :cascade do |t|
+  create_table "tracks", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "track_name"
     t.string "artist_name"
     t.string "album_name"
