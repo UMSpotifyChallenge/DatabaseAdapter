@@ -36,17 +36,18 @@ class PlaylistsController < ApplicationController
       for j in tracks
         pos = j.delete("pos")
         track_uri = j["track_uri"].delete("spotify:track:")
-        j["track_uri"] = track_uri
-        t = Track.find_by(track_uri: track_uri)
-        if t == nil
-          # j[:id] = j.delete("track_uri")
-          t = Track.new(j)
-          if t.save == false
-            success = false
-          end
-        else
-          puts("already stored")
-        end
+        j["uri"] = track_uri
+        t = Track.new(j)
+        # # t = Track.find_by(track_uri: track_uri)
+        # if t == nil
+        #   # j[:id] = j.delete("track_uri")
+        #   t = Track.new(j)
+        #   if t.save == false
+        #     success = false
+        #   end
+        # else
+        #   puts("already stored")
+        # end
 
         if Include.create(:playlist_id => @playlist.id, :track_id => t.id, :pos => pos) == false
           success = false
