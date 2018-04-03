@@ -17,7 +17,7 @@ class TracksControllerTest < ActionDispatch::IntegrationTest
 
   test "should create track" do
     assert_difference('Track.count') do
-      post tracks_url, params: { track: { album_name: @track.album_name, album_uri: @track.album_uri, artist_name: @track.artist_name, artist_uri: @track.artist_uri, duration_ms: @track.duration_ms, track_name: @track.track_name, track_uri: @track.track_uri } }
+      post tracks_url, params: { track: { album_id: @track.album_id, duration: @track.duration, name: @track.name, uri: @track.uri } }
     end
 
     assert_redirected_to track_url(Track.last)
@@ -34,7 +34,7 @@ class TracksControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update track" do
-    patch track_url(@track), params: { track: { album_name: @track.album_name, album_uri: @track.album_uri, artist_name: @track.artist_name, artist_uri: @track.artist_uri, duration_ms: @track.duration_ms, track_name: @track.track_name, track_uri: @track.track_uri } }
+    patch track_url(@track), params: { track: { album_id: @track.album_id, duration: @track.duration, name: @track.name, uri: @track.uri } }
     assert_redirected_to track_url(@track)
   end
 

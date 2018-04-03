@@ -3,11 +3,7 @@
 one:
   name: MyString
   uri: MyString
-  duration: 1
-  album: one
 
 two:
   name: MyString
   uri: MyString
-  duration: 1
-  album: two

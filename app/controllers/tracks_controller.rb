@@ -69,6 +69,6 @@ class TracksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def track_params
-      params.require(:track).permit(:track_name, :artist_name, :album_name, :track_uri, :artist_uri, :album_uri, :duration_ms)
+      params.require(:track).permit(:name, :uri, :duration, :album_id)
     end
 end
