@@ -36,8 +36,8 @@ class PlaylistsController < ApplicationController
       for j in tracks
         pos = j.delete("pos")
         track_uri = j["track_uri"].delete("spotify:track:")
-        j["uri"] = track_uri
-        t = Track.new(j)
+        h = {'name' => j["track_name"], 'uri' => track_uri}
+        t = Track.new(h)
         # # t = Track.find_by(track_uri: track_uri)
         # if t == nil
         #   # j[:id] = j.delete("track_uri")
