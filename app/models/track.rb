@@ -4,8 +4,11 @@ class Track < ApplicationRecord
   has_many :playlists, :through => :includes, :source => :playlist
 
   def self.load_hadoop_result
+
+    puts ("HashStart:" + Time.current.to_s)
     uri_id_map = Hash.new
     Album.select(:id, :uri).each {|a| uri_id_map[a.uri] = a.id }
+    puts ("HashEnd:" + Time.current.to_s)
 
     f = File.open("public/mpd_result/track_output.txt", "r")
     f.each_line do |line|
@@ -18,8 +21,23 @@ class Track < ApplicationRecord
       json["album_id"] = album_id
 
       t = Track.create(json)
-      puts t.id
+
+      if t.id % 1000 == 0 then
+        self.speed
+      end
+      
     end
+  end
+
+  def self.speed
+    duration = Track.last.created_at - Track.first.created_at
+    counting = Track.last.id - Track.first.id
+    puts counting
+    speed = counting / duration
+    puts speed
+    remaining = 2262292.0 - counting
+    time_to_finish = remaining / speed
+    puts Track.last.created_at + time_to_finish
   end
 
   # def self.load_spotify
