@@ -4,6 +4,9 @@ class Track < ApplicationRecord
   has_many :playlists, :through => :includes, :source => :playlist
 
   def self.load_hadoop_result
+    uri_id_map = Hash.new
+    Album.select(:id, :uri).each {|a| uri_id_map[a.uri] = a.id }
+
     f = File.open("public/mpd_result/track_output.txt", "r")
     f.each_line do |line|
       value = line.split("\t")[1]
@@ -11,7 +14,7 @@ class Track < ApplicationRecord
       json["name"] = json["name"][0..254]
 
       album_uri = json.delete("album_uri")
-      album_id = Album.where(uri: album_uri).select(:id).take.id
+      album_id = uri_id_map[album_uri]
       json["album_id"] = album_id
 
       t = Track.create(json)
