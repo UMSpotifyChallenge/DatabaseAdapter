@@ -10,7 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180218051126) do
+ActiveRecord::Schema.define(version: 20180403054108) do
+
+  create_table "albums", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "uri"
+    t.bigint "artist_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["artist_id"], name: "index_albums_on_artist_id"
+  end
+
+  create_table "artists", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "uri"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "includes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "playlist_id"
@@ -35,16 +51,16 @@ ActiveRecord::Schema.define(version: 20180218051126) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "tracks", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "track_name"
-    t.string "artist_name"
-    t.string "album_name"
-    t.string "track_uri"
-    t.string "artist_uri"
-    t.string "album_uri"
-    t.integer "duration_ms"
+  create_table "tracks", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "uri"
+    t.integer "duration"
+    t.bigint "album_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["album_id"], name: "index_tracks_on_album_id"
   end
 
+  add_foreign_key "albums", "artists"
+  add_foreign_key "tracks", "albums"
 end
