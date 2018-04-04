@@ -25,3 +25,5 @@
 .idea/
 
 public/mpd_result/
+config/database.yml
+
