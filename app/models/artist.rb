@@ -4,8 +4,11 @@ class Artist < ApplicationRecord
     f.each_line do |line|
       value = line.split("\t")[1]
       json = JSON.parse(value)
-      json["name"] = json["name"][0..255]
-      Artist.create(json)
+      json["name"] = json["name"][0..254]
+      a = Artist.create(json)
+      puts a.id
     end
   end
 end
+
+# ActiveRecord::Base.logger = nil
