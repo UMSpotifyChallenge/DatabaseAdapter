@@ -6,7 +6,8 @@ class Artist < ApplicationRecord
       json = JSON.parse(value)
       json["name"] = json["name"][0..254]
       a = Artist.create(json)
-      puts a.id
+      id = "\t" + a.id.to_s + "\r"
+      print id
     end
   end
 end
