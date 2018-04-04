@@ -9,12 +9,14 @@ class Album < ApplicationRecord
       json["name"] = json["name"][0..254]
 
       artist_uri = json.delete("artist_uri")
-      artist = Artist.find_by uri: artist_uri
-      json["artist_id"] = artist.id
+      # artist = Artist.find_by uri: artist_uri
+      artist_id = Artist.where(uri: artist_uri).select(:id).take.id
+      json["artist_id"] = artist_id
 
       a = Album.create(json)
-      id = "\t" + a.id.to_s + "\r"
-      print id
+      puts a.id
+      # id = "\t" + a.id.to_s + "\r"
+      # print id
     end
   end
 end
