@@ -52,7 +52,7 @@ class Track < ApplicationRecord
     keys_to_delete = %w(analysis_url track_href external_urls href id type uri)
 
     iteration = 0
-    Track.find_in_batches(batch_size: 50) do |tracks|
+    Track.find_in_batches(batch_size: 100) do |tracks|
       if iteration%99 == 0
         puts iteration
         case ((iteration/99) % 3)
