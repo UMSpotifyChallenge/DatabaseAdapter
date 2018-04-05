@@ -15,24 +15,27 @@ class Playlist < ApplicationRecord
       file = File.read(path)
       json = JSON.parse(file)
       json["playlists"].each do |pl_json|
-        load_pl_json(pl_json)
+        load_pl_json(pl_json, uri_id_map)
       end
     end
   end
 
   def self.fix_remaining(path, from)
+    uri_id_map = Hash.new
+    Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
+
     # path = "public/data/mpd.slice.482000-482999.json"
     file = File.read(path)
     json = JSON.parse(file)
     pls = json["playlists"]
     for i in from..999
       pl_json = pls[i]
-      load_pl_json(pl_json)
+      load_pl_json(pl_json, uri_id_map)
     end
   end
 
 
-  def self.load_pl_json(pl_json)
+  def self.load_pl_json(pl_json, uri_id_map)
     pid = pl_json.delete("pid")
     tracks = pl_json.delete("tracks")
     pl_json["modified_at"] = Time.at(pl_json["modified_at"]).to_s
