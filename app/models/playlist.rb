@@ -16,6 +16,8 @@ class Playlist < ApplicationRecord
       json["playlists"].each do |pl_json|
         pid = pl_json.delete("pid")
         tracks = pl_json.delete("tracks")
+        pl_json["modified_at"] = Time.at(pl_json["modified_at"]).to_s
+
         pl = Playlist.create(pl_json)
         playlist_id = pl.id
 
