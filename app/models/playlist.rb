@@ -5,11 +5,9 @@ class Playlist < ApplicationRecord
   serialize :name
 
   def self.load_mpd_json
-    puts DateTime.now.to_s
     uri_id_map = Hash.new
     Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
-    puts DateTime.now.to_s
-
+    
     Dir["public/data/*.json"].each do |path|
       file = File.read(path)
       json = JSON.parse(file)
