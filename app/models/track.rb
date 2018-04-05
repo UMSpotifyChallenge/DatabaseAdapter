@@ -3,8 +3,6 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
-  @@first_updated = nil
-
   def self.load_hadoop_result
 
     puts ("HashStart:" + Time.current.to_s)
@@ -46,17 +44,10 @@ class Track < ApplicationRecord
     puts last_updated.updated_at + time_to_finish
   end
 
-  # def self.load_spotify
-  #   Track.find_in_batches(batch_size: 50) do |tracks|
-  #   end
-  # end
   def self.request_spotify_api
     keys_to_delete = %w(analysis_url track_href external_urls href id type uri)
 
-    @@first_updated = Track.where('acousticness' => nil).first
-    start_from = @@first_updated.id
-
-    puts start_from
+    start_from = Track.where('acousticness' => nil).first.id
 
     iteration = 0
     Track.find_in_batches(batch_size: 100, start: start_from) do |tracks|
@@ -79,12 +70,16 @@ class Track < ApplicationRecord
       uri_list = tracks.map { |t| t.uri }
       af_list = RSpotify::AudioFeatures.find(uri_list)
       af_list.each do |af|
-        json = JSON.parse(af.to_json)
-        uri = json["id"]
-        keys_to_delete.each { |k| json.delete(k) }
+        if af == nil
+          puts "missing track_uri"
+        else
+          json = JSON.parse(af.to_json)
+          uri = json["id"]
+          keys_to_delete.each { |k| json.delete(k) }
 
-        track = tracks.find {|t| t.uri == uri }
-        track.update_attributes(json)
+          track = tracks.find {|t| t.uri == uri }
+          track.update_attributes(json)
+        end
       end
     end
   end
