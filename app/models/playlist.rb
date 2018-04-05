@@ -58,10 +58,10 @@ class Playlist < ApplicationRecord
   end
 
   def self.fix_704
-    uri_id_map = Hash.new
-    Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
+    # uri_id_map = Hash.new
+    # Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
 
-    # path = "public/data/mpd.slice.482000-482999.json"
+    path = "public/data/mpd.slice.482000-482999.json"
     file = File.read(path)
     json = JSON.parse(file)
     pls = json["playlists"]
@@ -73,7 +73,7 @@ class Playlist < ApplicationRecord
 
     tracks.each do |t|
       track_uri = t["track_uri"][14..-1]
-      track_id = uri_id_map[track_uri]
+      track_id = Track.find_by(uri: track_uri).id #uri_id_map[track_uri]
       if track_id == nil
         puts "--- That's what was missing..."
         puts pid
