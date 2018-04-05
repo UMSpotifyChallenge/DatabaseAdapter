@@ -29,11 +29,11 @@ class Track < ApplicationRecord
     end
   end
 
-  def self.speed(offset)
+  def self.speed
     updated = Track.where.not('acousticness' => nil)
     last_updated = updated.last
     last_updated_id = last_updated.id
-    first_updated =  Track.find(last_updated_id - offset)
+    first_updated =  Track.find(1239072)
 
     puts last_updated_id
 
@@ -74,7 +74,8 @@ class Track < ApplicationRecord
       af_list.each do |af|
         if af == nil
           puts "missing track_uri"
-          Track.find(22131).update_attribute(:acousticness,-1)
+          # just, let's run fix_holes before.
+          # Track.find(22131).update_attribute(:acousticness,-1)
         else
           json = JSON.parse(af.to_json)
           uri = json["id"]
