@@ -7,6 +7,7 @@ end
 
 gem 'ffi', '1.9.18'
 #gem 'rspotify'
+gem 'bulk_insert'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.5'

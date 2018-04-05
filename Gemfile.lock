@@ -43,6 +43,8 @@ GEM
     arel (8.0.0)
     bindex (0.5.0)
     builder (3.2.3)
+    bulk_insert (1.6.0)
+      activerecord (>= 4.1.0)
     byebug (10.0.0)
     capybara (2.18.0)
       addressable
@@ -175,6 +177,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bulk_insert
   byebug
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
