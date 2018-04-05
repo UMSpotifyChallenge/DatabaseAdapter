@@ -32,14 +32,16 @@ class Track < ApplicationRecord
   def self.speed(offset)
     updated = Track.where.not('acousticness' => nil)
     last_updated = updated.last
-    first_updated =  Track.find(last_updated.id - offset)
-    
+    last_updated_id = last_updated.id
+    first_updated =  Track.find(last_updated_id - offset)
+
+    puts last_updated_id
+
     duration = last_updated.updated_at - first_updated.updated_at
-    counting = last_updated.id - first_updated.id
-    puts counting
+    counting = last_updated_id - first_updated.id
     speed = counting / duration
     puts speed
-    remaining = 2262292.0 - counting
+    remaining = 2262292.0 - last_updated_id
     time_to_finish = remaining / speed
     puts last_updated.updated_at + time_to_finish
   end
