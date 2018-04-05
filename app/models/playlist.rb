@@ -56,6 +56,36 @@ class Playlist < ApplicationRecord
       end
     end
   end
+
+  def self.fix_704
+    uri_id_map = Hash.new
+    Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
+
+    # path = "public/data/mpd.slice.482000-482999.json"
+    file = File.read(path)
+    json = JSON.parse(file)
+    pls = json["playlists"]
+    pl_json = pls[704]
+    playlist_id = 30705
+
+    pid = pl_json.delete("pid")
+    tracks = pl_json.delete("tracks")
+
+    tracks.each do |t|
+      track_uri = t["track_uri"][14..-1]
+      track_id = uri_id_map[track_uri]
+      if track_id == nil
+        puts "--- That's what was missing..."
+        puts pid
+        puts t
+      else
+        pos = t["pos"]
+        Include.create(:playlist_id => playlist_id, :track_id => track_id, :pos => pos)
+      end
+    end
+
+  end
+
 end
 
 # => Wed, 04 Apr 2018 22:49:28 -0400
