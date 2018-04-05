@@ -7,7 +7,7 @@ class Playlist < ApplicationRecord
   def self.load_mpd_json
     uri_id_map = Hash.new
     Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
-    
+
     Dir["public/data/*.json"].each do |path|
       file = File.read(path)
       json = JSON.parse(file)

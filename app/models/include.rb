@@ -15,6 +15,6 @@ class Include < ApplicationRecord
         puts speed
         remaining = 66346428.0 - counting
         time_to_finish = remaining / speed
-        puts Include.last.created_at + time_to_finish
+        puts Include.last.created_at.localtime + time_to_finish
     end
 end
