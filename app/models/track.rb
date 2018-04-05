@@ -30,14 +30,18 @@ class Track < ApplicationRecord
   end
 
   def self.speed
-    duration = Track.last.created_at - Track.first.created_at
-    counting = Track.last.id - Track.first.id
+    updated = Track.where.not('acousticness' => nil)
+    first_updated = updated.first
+    last_updated = updated.last
+
+    duration = last_updated.updated_at - first_updated.updated_at
+    counting = last_updated.id - first_updated.id
     puts counting
     speed = counting / duration
     puts speed
     remaining = 2262292.0 - counting
     time_to_finish = remaining / speed
-    puts Track.last.created_at + time_to_finish
+    puts last_updated.updated_at + time_to_finish
   end
 
   # def self.load_spotify
