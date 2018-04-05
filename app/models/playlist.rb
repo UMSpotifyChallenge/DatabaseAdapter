@@ -30,8 +30,8 @@ class Playlist < ApplicationRecord
       first_pl = pls[0]
 
       if loaded_first_list.exists?(:name => first_pl["name"], :num_tracks =>  first_pl["num_tracks"])
-        puts "Loaded" + path
-	FileUtils.mv(path, path+"_done")
+        puts "Loaded: " + path
+        FileUtils.mv(path, path+"_done")
       end
     end
   end
@@ -67,6 +67,7 @@ class Playlist < ApplicationRecord
 
   def self.load_pl_json(pl_json, uri_id_map)
     pid = pl_json.delete("pid")
+    puts pid
     tracks = pl_json.delete("tracks")
     pl_json["modified_at"] = Time.at(pl_json["modified_at"]).to_s
 

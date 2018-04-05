@@ -8,9 +8,12 @@ class Include < ApplicationRecord
     validates :track_id, :presence => true
 
     def self.speed
+        playlist_restart = 31001
+        include_restart = 2048546
+
         puts "---Playlist---"
-        duration = Playlist.last.created_at - Playlist.first.created_at
-        counting = Playlist.last.id - Playlist.first.id
+        duration = Playlist.last.created_at - Playlist.find(playlist_restart).created_at
+        counting = Playlist.last.id - playlist_restart
         puts counting
         speed = counting / duration
         puts speed
@@ -24,8 +27,8 @@ class Include < ApplicationRecord
         end
 
         puts "---Include---"
-        duration = Include.last.created_at - Include.first.created_at
-        counting = Include.last.id - Include.first.id
+        duration = Include.last.created_at - Include.find(include_restart).created_at
+        counting = Include.last.id - include_restart
         puts counting
         speed = counting / duration
         puts speed
