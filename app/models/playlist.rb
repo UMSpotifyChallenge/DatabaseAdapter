@@ -20,6 +20,34 @@ class Playlist < ApplicationRecord
     end
   end
 
+  def self.check_loaded
+    loaded_first_list = Playlist.where('id % 1000 = 1')
+
+    Dir["public/data/*.json"].each do |path|
+      pls = get_pls_of_path(path)
+      first_pl = pls[0]
+
+      if loaded_first_list.exists?(:name => first_pl["name"], :num_tracks =>  first_pl["num_tracks"])
+        puts path
+      end
+    end
+  end
+
+  def self.move_done_files
+    Dir["public/data/*.json"].each do |path|
+      puts path
+
+      FileUtils.mv(path, path+"_done")
+    end
+    puts "DONE"
+  end
+
+  def self.get_pls_of_path(path)
+    file = File.read(path)
+    json = JSON.parse(file)
+    return json["playlists"]
+  end
+
   def self.fix_remaining(path, from)
     uri_id_map = Hash.new
     Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
@@ -33,7 +61,6 @@ class Playlist < ApplicationRecord
       load_pl_json(pl_json, uri_id_map)
     end
   end
-
 
   def self.load_pl_json(pl_json, uri_id_map)
     pid = pl_json.delete("pid")
