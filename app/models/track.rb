@@ -74,6 +74,7 @@ class Track < ApplicationRecord
       af_list.each do |af|
         if af == nil
           puts "missing track_uri"
+          Track.find(22131).update_attribute(:acousticness,-1)
         else
           json = JSON.parse(af.to_json)
           uri = json["id"]
@@ -83,6 +84,18 @@ class Track < ApplicationRecord
           track.update_attributes(json)
         end
       end
+    end
+  end
+
+  def self.fix_holes
+    while true
+      hole = Track.where('acousticness' => nil).first.id
+      puts hole
+      next_item = Track.find(hole+1)
+      if next_item.acousticness == nil
+        return
+      end
+      Track.find(hole).update_attribute(:acousticness,-1)
     end
   end
 
