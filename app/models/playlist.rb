@@ -16,10 +16,6 @@ class Playlist < ApplicationRecord
       json["playlists"].each do |pl_json|
         pid = pl_json.delete("pid")
         tracks = pl_json.delete("tracks")
-        # if !pl_json["name"].force_encoding('ascii').valid_encoding?
-        #   puts ("\n\nwhy???\n\n" + pl_json["name"])
-        #   pl_json["name"] = "_invalid_encoding"
-        # end
         pl = Playlist.create(pl_json)
         playlist_id = pl.id
 
