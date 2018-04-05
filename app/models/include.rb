@@ -14,9 +14,14 @@ class Include < ApplicationRecord
         puts counting
         speed = counting / duration
         puts speed
-        remaining = 1000000.0 - counting
-        time_to_finish = remaining / speed
-        puts Playlist.last.created_at.localtime + time_to_finish
+
+        last_p = Playlist.last
+        for i in 1..10
+            goal = 100000.0*i
+            remaining = goal - counting
+            time_to_finish = remaining / speed
+            puts "- %.1fM:\t%s" % [i*0.1, last_p.created_at.localtime+time_to_finish]
+        end
 
         puts "---Include---"
         duration = Include.last.created_at - Include.first.created_at
