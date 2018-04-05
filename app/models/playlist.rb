@@ -15,7 +15,26 @@ class Playlist < ApplicationRecord
       file = File.read(path)
       json = JSON.parse(file)
       json["playlists"].each do |pl_json|
-        load_pl_json(pl_json, uri_id_map)
+        pid = pl_json.delete("pid")
+        puts pid
+        tracks = pl_json.delete("tracks")
+        pl_json["modified_at"] = Time.at(pl_json["modified_at"]).to_s
+
+        pl = Playlist.create(pl_json)
+        playlist_id = pl.id
+
+        tracks.each do |t|
+          track_uri = t["track_uri"][14..-1]
+          track_id = uri_id_map[track_uri]
+          if track_id == nil
+            puts "--- That's what was missing..."
+            puts pid
+            puts t
+          else
+            pos = t["pos"]
+            Include.create(:playlist_id => playlist_id, :track_id => track_id, :pos => pos)
+          end
+        end
       end
 
       FileUtils.mv(path, path+"_done")
@@ -64,6 +83,8 @@ class Playlist < ApplicationRecord
       load_pl_json(pl_json, uri_id_map)
     end
   end
+
+  # 31278
 
   def self.load_pl_json(pl_json, uri_id_map)
     pid = pl_json.delete("pid")
