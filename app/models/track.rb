@@ -3,6 +3,8 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
+  @@first_updated = nil
+
   def self.load_hadoop_result
 
     puts ("HashStart:" + Time.current.to_s)
@@ -29,11 +31,11 @@ class Track < ApplicationRecord
     end
   end
 
-  def self.speed
+  def self.speed(offset)
     updated = Track.where.not('acousticness' => nil)
-    first_updated = updated.first
     last_updated = updated.last
-
+    first_updated =  Track.find(last_updated.id - offset)
+    
     duration = last_updated.updated_at - first_updated.updated_at
     counting = last_updated.id - first_updated.id
     puts counting
@@ -51,11 +53,16 @@ class Track < ApplicationRecord
   def self.request_spotify_api
     keys_to_delete = %w(analysis_url track_href external_urls href id type uri)
 
+    @@first_updated = Track.where('acousticness' => nil).first
+    start_from = @@first_updated.id
+
+    puts start_from
+
     iteration = 0
-    Track.find_in_batches(batch_size: 100) do |tracks|
-      if iteration%99 == 0
+    Track.find_in_batches(batch_size: 100, start: start_from) do |tracks|
+      if iteration%49 == 0
         puts iteration
-        case ((iteration/99) % 3)
+        case ((iteration/49) % 3)
           when 0
             puts "Auth ZERO"
             RSpotify.authenticate("6b76fbdce4f84d07959cb56066e43495","596c6c2badd047c187c9b15a7006f007")
