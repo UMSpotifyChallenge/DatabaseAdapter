@@ -8,8 +8,8 @@ class Include < ApplicationRecord
     validates :track_id, :presence => true
 
     def self.speed
-        playlist_restart = 31001
-        include_restart = 2048546
+        playlist_restart = 32001
+        include_restart = 2111315
 
         puts "---Playlist---"
         last_p = Playlist.last
