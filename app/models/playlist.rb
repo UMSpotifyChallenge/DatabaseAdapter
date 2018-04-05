@@ -17,6 +17,8 @@ class Playlist < ApplicationRecord
       json["playlists"].each do |pl_json|
         load_pl_json(pl_json, uri_id_map)
       end
+
+      FileUtils.mv(path, path+"_done")
     end
   end
 
@@ -28,7 +30,8 @@ class Playlist < ApplicationRecord
       first_pl = pls[0]
 
       if loaded_first_list.exists?(:name => first_pl["name"], :num_tracks =>  first_pl["num_tracks"])
-        puts path
+        puts "Loaded" + path
+	FileUtils.mv(path, path+"_done")
       end
     end
   end
