@@ -49,7 +49,7 @@ class Track < ApplicationRecord
 
     iteration = 0
     Track.find_in_batches(batch_size: 50) do |tracks|
-      case (iteration % 3)
+      case ((iteration/20) % 3)
         when 0
           RSpotify.authenticate("6b76fbdce4f84d07959cb56066e43495","596c6c2badd047c187c9b15a7006f007")
         when 1
