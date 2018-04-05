@@ -19,4 +19,16 @@ class Album < ApplicationRecord
       # print id
     end
   end
+
+  def self.speed
+    duration = Album.last.created_at - Album.first.created_at
+    counting = Album.last.id - Album.first.id
+    puts counting
+    speed = counting / duration
+    puts speed
+    remaining = 734684.0 - counting
+    time_to_finish = remaining / speed
+    puts Album.last.created_at + time_to_finish
+  end
+
 end
