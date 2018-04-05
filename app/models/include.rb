@@ -27,13 +27,14 @@ class Include < ApplicationRecord
         end
 
         puts "---Include---"
-        duration = Include.last.created_at - Include.find(include_restart).created_at
-        counting = Include.last.id - include_restart
+        last_include = Include.last
+        duration = last_include.created_at - Include.find(include_restart).created_at
+        counting = last_include.id - include_restart
         puts counting
         speed = counting / duration
         puts speed
-        remaining = 66346428.0 - counting
+        remaining = 66346428.0 - last_include.id
         time_to_finish = remaining / speed
-        puts Include.last.created_at.localtime + time_to_finish
+        puts last_include.created_at.localtime + time_to_finish
     end
 end
