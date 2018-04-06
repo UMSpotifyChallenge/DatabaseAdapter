@@ -43,7 +43,7 @@ class Track < ApplicationRecord
     puts speed
     remaining = 2262292.0 - last_updated_id
     time_to_finish = remaining / speed
-    puts last_updated.updated_at + time_to_finish
+    puts last_updated.updated_at.localtime + time_to_finish
   end
 
   def self.request_spotify_api
