@@ -19,7 +19,9 @@ class Include < ApplicationRecord
         speed = counting / duration
         puts speed
 
-        for i in 1..10
+        finished = last_p.id / 100000
+
+        for i in (finished+1)..10
             goal = 100000.0*i
             remaining = goal - last_p.id
             time_to_finish = remaining / speed
