@@ -8,24 +8,33 @@ class Include < ApplicationRecord
     validates :track_id, :presence => true
 
     def self.speed
+        playlist_restart = 64001
+        include_restart = 4236165
+
         puts "---Playlist---"
-        duration = Playlist.last.created_at - Playlist.first.created_at
-        counting = Playlist.last.id - Playlist.first.id
-        puts counting
+        last_p = Playlist.last
+        duration = last_p.created_at - Playlist.find(playlist_restart).created_at
+        counting = last_p.id - playlist_restart
+        puts "%d (%.2f%%)" % [last_p.id, (last_p.id / 1000000.0 * 100 )]
         speed = counting / duration
         puts speed
-        remaining = 1000000.0 - counting
-        time_to_finish = remaining / speed
-        puts Playlist.last.created_at.localtime + time_to_finish
+
+        for i in 1..10
+            goal = 100000.0*i
+            remaining = goal - last_p.id
+            time_to_finish = remaining / speed
+            puts "- %.1fM:\t%s" % [i*0.1, last_p.created_at.localtime+time_to_finish]
+        end
 
         puts "---Include---"
-        duration = Include.last.created_at - Include.first.created_at
-        counting = Include.last.id - Include.first.id
-        puts counting
+        last_include = Include.last
+        duration = last_include.created_at - Include.find(include_restart).created_at
+        counting = last_include.id - include_restart
+        puts "%d (%.2f%%)" % [last_include.id, (last_include.id / 66346428.0 * 100 )]
         speed = counting / duration
         puts speed
-        remaining = 66346428.0 - counting
+        remaining = 66346428.0 - last_include.id
         time_to_finish = remaining / speed
-        puts Include.last.created_at.localtime + time_to_finish
+        puts last_include.created_at.localtime + time_to_finish
     end
 end
