@@ -26,5 +26,6 @@
 
 public/data/
 public/mpd_result/
+public/uri_id_map.json
 config/database.yml
 
