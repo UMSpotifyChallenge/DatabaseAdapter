@@ -6,8 +6,21 @@ class Playlist < ApplicationRecord
   serialize :description
 
   def self.load_mpd_json
-    uri_id_map = Hash.new
-    Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
+    # puts ("HashStart:" + Time.current.to_s)
+    # uri_id_map = Hash.new
+    # Track.select(:id, :uri).each {|t| uri_id_map[t.uri] = t.id }
+    # # File.open("public/uri_id_map.json","w") do |f|
+    # #   f.write(uri_id_map.to_json)
+    # # end
+    # puts ("HashEnd:" + Time.current.to_s)
+
+    start = Time.current
+    path = "public/uri_id_map.json"
+    file = File.read(path)
+    uri_id_map = JSON.parse(file)
+    finish = Time.current
+    elapsed = finish - start
+    puts ("JSON loading: " + elapsed.to_s)
 
     Dir["public/data/*.json"].each do |path|
       puts path
@@ -23,17 +36,21 @@ class Playlist < ApplicationRecord
         pl = Playlist.create(pl_json)
         playlist_id = pl.id
 
-        tracks.each do |t|
-          track_uri = t["track_uri"][14..-1]
-          track_id = uri_id_map[track_uri]
-          if track_id == nil
-            puts "--- That's what was missing..."
-            puts pid
-            puts t
-          else
-            pos = t["pos"]
-            Include.create(:playlist_id => playlist_id, :track_id => track_id, :pos => pos)
+        Include.bulk_insert(:playlist_id, :track_id, :pos, :created_at, :updated_at) do |worker|
+          tracks.each do |t|
+            track_uri = t["track_uri"][14..-1]
+            track_id = uri_id_map[track_uri]
+            if track_id == nil
+              puts "--- That's what was missing..."
+              puts pid
+              puts t
+            else
+              pos = t["pos"]
+              worker.add playlist_id: playlist_id, track_id: track_id, pos: pos
+              # Include.create(:playlist_id => playlist_id, :track_id => track_id, :pos => pos)
+            end
           end
+
         end
       end
 
