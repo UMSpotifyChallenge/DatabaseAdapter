@@ -35,7 +35,7 @@ class Track < ApplicationRecord
     last_updated_id = last_updated.id
     first_updated =  Track.find(1239072)
 
-    puts last_updated_id
+    puts "%d (%.2f%%)" % [last_updated_id, (last_updated_id / 2262292.0 * 100 )]
 
     duration = last_updated.updated_at - first_updated.updated_at
     counting = last_updated_id - first_updated.id
@@ -49,6 +49,7 @@ class Track < ApplicationRecord
   def self.request_spotify_api
     keys_to_delete = %w(analysis_url track_href external_urls href id type uri)
 
+    fix_holes
     start_from = Track.where('acousticness' => nil).first.id
 
     iteration = 0
