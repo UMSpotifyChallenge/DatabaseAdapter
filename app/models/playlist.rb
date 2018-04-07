@@ -5,6 +5,12 @@ class Playlist < ApplicationRecord
   serialize :name
   serialize :description
 
+  def track_list
+    # includes = Include.where('id >= ? AND playlist_id = ?', start, id).limit(num_tracks)
+    # return includes # .map {|i| i.track}
+    return Track.joins(:includes).where('includes.id >= ? AND includes.playlist_id = ?', start, id).limit(num_tracks) #.order('includes.pos')
+  end
+
   def self.compute_start
     iid = 1
     Playlist.find_each do |p|
