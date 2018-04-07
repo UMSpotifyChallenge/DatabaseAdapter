@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180407012533) do
+ActiveRecord::Schema.define(version: 20180407222005) do
 
   create_table "albums", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 20180407012533) do
     t.float "tempo", limit: 24
     t.integer "time_signature"
     t.float "valence", limit: 24
+    t.integer "num_appearances"
     t.index ["album_id"], name: "index_tracks_on_album_id"
   end
 
