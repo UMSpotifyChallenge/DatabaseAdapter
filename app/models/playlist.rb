@@ -9,6 +9,16 @@ class Playlist < ApplicationRecord
     iid = 1
     Playlist.find_each do |p|
       start_include = p.includes.where('id >= ? AND playlist_id = ? AND pos = ?', iid, p.id, 0).first
+      if start_include == nil
+        puts "Order problem"
+        puts p.id
+        start_include = p.includes.where('playlist_id = ? AND pos = ?', p.id, 0).first
+      end
+      if start_include == nil
+        puts "No pos=0"
+        puts p.id
+        start_include = p.includes.first
+      end
       iid = start_include.id
       # puts "playlist%d \t %d" % [p.id, iid]
       p.update_attribute(:start, iid)
