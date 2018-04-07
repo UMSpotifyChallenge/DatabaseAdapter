@@ -5,6 +5,16 @@ class Playlist < ApplicationRecord
   serialize :name
   serialize :description
 
+  def self.compute_start
+    iid = 1
+    Playlist.find_each do |p|
+      start_include = p.includes.where('id >= ? AND playlist_id = ? AND pos = ?', iid, p.id, 0).first
+      iid = start_include.id
+      # puts "playlist%d \t %d" % [p.id, iid]
+      p.update_attribute(:start, iid)
+    end
+  end
+
   def self.load_mpd_json
     # puts ("HashStart:" + Time.current.to_s)
     # uri_id_map = Hash.new
