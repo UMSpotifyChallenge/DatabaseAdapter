@@ -25,6 +25,23 @@ class Playlist < ApplicationRecord
     end
   end
 
+  def self.speed
+    updated = Playlist.where.not('start' => nil)
+    last_updated = updated.last
+    last_updated_id = last_updated.id
+    first_updated =  Playlist.find(30707)
+
+    puts "%d (%.2f%%)" % [last_updated_id, (last_updated_id / 1000000.0 * 100 )]
+
+    duration = last_updated.updated_at - first_updated.updated_at
+    counting = last_updated_id - first_updated.id
+    speed = counting / duration
+    puts speed
+    remaining = 1000000.0 - last_updated_id
+    time_to_finish = remaining / speed
+    puts last_updated.updated_at.localtime + time_to_finish
+  end
+
   def self.load_mpd_json
     # puts ("HashStart:" + Time.current.to_s)
     # uri_id_map = Hash.new
