@@ -10,26 +10,15 @@ class Include < ApplicationRecord
     def self.compute_appearances
       counts = Array.new(Track.count + 1, 0) # size, default_value
 
-      Include.select(:id, :track_id).find_in_batches(batch_size: 5000, finish: 10000) do |includes|
+      Include.select(:id, :track_id).find_in_batches(batch_size: 5000) do |includes|
         includes.each do |i|
           counts[i.track_id.to_i] += 1
         end
       end
 
-      # update_hash = Hash.new()
-      # counts.each_with_index do |c, i|
-      #   update_hash[i] = {"num_appearances" => counts[i]}
-      # end
-      # update_hash.delete(0)
-      #
-      # return update_hash
-
-      # Track.select(:id, :num_appearances).update(update_hash.keys, update_hash.values)
-
       Track.select(:id, :num_appearances).find_each do |t|
         t.update_attribute(:num_appearances, counts[t.id])
       end
-
     end
 
     def self.speed
