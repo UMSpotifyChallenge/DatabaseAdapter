@@ -1,5 +1,6 @@
 class Album < ApplicationRecord
   belongs_to :artist
+  has_many :tracks
 
   def self.load_hadoop_result
     f = File.open("public/mpd_result/album_output.txt", "r")
