@@ -17,9 +17,13 @@ class Playlist < ApplicationRecord
     print "\n"
   end
 
-  def self.get_popular_playlists(counts)
-    return Playlist.order(num_followers: :desc).limit(counts).map do |p|
-      p.track_list.pluck(:id, :name).map {|ary| "%d_%s" % [ary[0], ary[1][0..15].parameterize.underscore]}
+  def self.get_popular_playlists(counts, with_name)
+    if with_name
+      return Playlist.order(num_followers: :desc).limit(counts).map do |p|
+        p.track_list.pluck(:id, :name).map {|ary| "%d_%s" % [ary[0], ary[1][0..15].parameterize.underscore]}
+      end
+    else
+      return Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list.pluck(:id) }
     end
   end
 
@@ -53,9 +57,9 @@ class Playlist < ApplicationRecord
     end
   end
 
-  def self.prepare_hon(size)
+  def self.prepare_hon(size, with_name)
     path = "popular_%d.txt" % size
-    tracks = get_popular_playlists(size)
+    tracks = get_popular_playlists(size, with_name)
     puts "Tracks loaded"
     write_hon_data(tracks, path)
   end
