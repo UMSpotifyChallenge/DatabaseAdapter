@@ -9,7 +9,46 @@ class Playlist < ApplicationRecord
     # includes = Include.where('id >= ? AND playlist_id = ?', start, id).limit(num_tracks)
     # return includes # .map {|i| i.track}
     #  #.order('includes.pos')
-    return Track.joins(:includes).where('includes.id >= ? AND includes.playlist_id = ?', start, id).limit(num_tracks).to_ary
+    return Track.joins(:includes).where('includes.id >= ? AND includes.playlist_id = ?', start, id).limit(num_tracks) #.to_ary
+  end
+
+  def print_tracks
+    self.track_list.each {|t| print "%d " % t.id}
+    print "\n"
+  end
+
+  def self.get_popular_playlists(counts)
+    return Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list.pluck(:id) }
+  end
+
+  def self.get_unique_tracks(tracks_list)
+    return tracks_list.flatten.to_set.to_a
+  end
+
+  def self.track_id_map(tracks)
+    id_map = Hash.new
+    tracks.each_with_index {|t, i| id_map[t] = i+1}
+    return id_map
+  end
+
+  def self.remapped_tracks_list(tracks_list, id_map)
+    return tracks_list.map {|p| p.map {|t| id_map[t]}}
+  end
+
+  def self.prepare_hon(tracks_list)
+    tracks = get_unique_tracks(tracks_list)
+    id_map = track_id_map(tracks)
+    remapped = remapped_tracks_list(tracks_list, id_map)
+    return remapped
+  end
+
+  def self.write_hon_data(remapped, path)
+    f = File.open("public/"+path, "w")
+    remapped.each_with_index do |p, i|
+      f.write("%d " % (i+1))
+      p.each {|t| f.write("%d " % t)}
+      f.write("\n")
+    end
   end
 
   def self.compute_start
