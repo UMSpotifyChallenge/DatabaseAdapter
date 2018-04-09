@@ -18,7 +18,9 @@ class Playlist < ApplicationRecord
   end
 
   def self.get_popular_playlists(counts)
-    return Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list.pluck(:id) }
+    return Playlist.order(num_followers: :desc).limit(counts).map do |p|
+      p.track_list.pluck(:id, :name).map {|ary| "%d_%s" % [ary[0], ary[1][0..15].parameterize.underscore]}
+    end
   end
 
   def self.get_unique_tracks(tracks_list)
@@ -35,7 +37,7 @@ class Playlist < ApplicationRecord
     return tracks_list.map {|p| p.map {|t| id_map[t]}}
   end
 
-  def self.prepare_hon(tracks_list)
+  def self.remapped_in_hon_format(tracks_list)
     tracks = get_unique_tracks(tracks_list)
     id_map = track_id_map(tracks)
     remapped = remapped_tracks_list(tracks_list, id_map)
@@ -46,9 +48,16 @@ class Playlist < ApplicationRecord
     f = File.open("public/"+path, "w")
     remapped.each_with_index do |p, i|
       f.write("%d " % (i+1))
-      p.each {|t| f.write("%d " % t)}
+      p.each {|t| f.write("%s " % t)}
       f.write("\n")
     end
+  end
+
+  def self.prepare_hon(size)
+    path = "public/data/popular_%d.txt" % size
+    tracks = get_popular_playlists(size)
+    puts "Tracks loaded"
+    write_hon_data(tracks, path)
   end
 
   def self.compute_start
