@@ -54,7 +54,7 @@ class Playlist < ApplicationRecord
   end
 
   def self.prepare_hon(size)
-    path = "public/data/popular_%d.txt" % size
+    path = "popular_%d.txt" % size
     tracks = get_popular_playlists(size)
     puts "Tracks loaded"
     write_hon_data(tracks, path)
