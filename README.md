@@ -1,5 +1,7 @@
 # Spotify RecSys Challenge Data Analysis
 
-This rails project can be used to organize Million Playlist Data 
-for ACM RecSys Challenge 2018 by Spotify.
-Also, it can load and store audio features of tracks by using the Spotify Web API.  
+* For ACM RecSys Challenge 2018
+* Organize Million Playlist Data by Spotify 
+* Load and store audio features of tracks using Spotify API
+* Prepare data in the format for higher order network and hypergraph
+  

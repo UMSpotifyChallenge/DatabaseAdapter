@@ -39,6 +39,13 @@ class Track < ApplicationRecord
 
   def self.print_hyperedges(counts)
     tracks = in_popular_playlists counts
+    
+    f = File.open("public/hypergraph_%d_tracks(%d).txt" % [counts, tracks.count], "w")
+    tracks.each do |t|
+      f.write("%d\n" % t.id)
+    end
+    f.close
+
     path = "hyperedges_%d" % tracks.count
 
     print_hyperedges_of_feature(path, tracks, "acousticness", [0, 0.01, 0.3, 0.622, 1], false)
