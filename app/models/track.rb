@@ -4,10 +4,10 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
-  def self.statistics(counts)
+  def self.statistics #(counts)
     attrs = ["acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
 
-    tracks_query = Track.select(attrs).where.not('tempo' => nil).limit(counts)
+    tracks_query = Track.select(attrs).where.not('tempo' => nil) #.limit(counts)
     tracks = tracks_query.to_a
     tracks.extend(DescriptiveStatistics)
 
