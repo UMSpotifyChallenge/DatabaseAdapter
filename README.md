@@ -1,24 +1,5 @@
-# README
+# Spotify RecSys Challenge Data Analysis
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+This rails project can be used to organize Million Playlist Data 
+for ACM RecSys Challenge 2018 by Spotify.
+Also, it can load and store audio features of tracks by using the Spotify Web API.  

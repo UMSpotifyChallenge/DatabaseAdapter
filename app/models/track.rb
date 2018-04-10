@@ -37,12 +37,35 @@ class Track < ApplicationRecord
     return nil
   end
 
-  def self.get_hyperedges_of_feature(tracks, attr, splits, discrete)
+  def self.print_hyperedges(counts)
+    tracks = in_popular_playlists counts
+    path = "hyperedges_%d" % tracks.count
+
+    print_hyperedges_of_feature(path, tracks, "acousticness", [0, 0.01, 0.3, 0.622, 1], false)
+    print_hyperedges_of_feature(path, tracks, "danceability", [0, 0.403, 0.575, 0.747, 1], false)
+    print_hyperedges_of_feature(path, tracks, "energy", [0, 0.368,	0.613,	0.859, 1], false)
+    print_hyperedges_of_feature(path, tracks, "instrumentalness", [0, 1e-6,	0.002, 0.686, 1], false)
+    print_hyperedges_of_feature(path, tracks, "liveness", [0, 0.028, 0.195, 0.363,1], false)
+    print_hyperedges_of_feature(path, tracks, "loudness", [-60, -13.44, -8.36, -3.28, 4], false)
+    print_hyperedges_of_feature(path, tracks, "speechiness", [0, 0.04, 0.093,	0.210,1], false)
+    print_hyperedges_of_feature(path, tracks, "tempo", [0, 91.104,	120.717, 150.330, 250], false)
+    print_hyperedges_of_feature(path, tracks, "valence", [0, 0.219, 0.475, 0.731, 1], false)
+    print_hyperedges_of_feature(path, tracks, "key", (0...12).to_a, true)
+    print_hyperedges_of_feature(path, tracks, "mode", [0,1], true)
+    print_hyperedges_of_feature(path, tracks, "time_signature", (0..5).to_a, true)
+  end
+
+  def self.print_hyperedges_of_feature(path_prefix, tracks, attr, splits, discrete)
+    clusters = discrete ? splits.count : splits.count-1
+    f = File.open("public/%s_%s(%d).txt" % [path_prefix, attr, clusters], "w")
+
+    counts = 0
     if discrete
       splits.each do |s|
         selected = tracks.select {|t| t[attr] == s}
         selected.each do |t|
-          print("%d\t%s_%d\n" % [t.id, attr, s])
+          counts += 1
+          f.write("%d\t%s_%d\n" % [t.id, attr, s])
         end
       end
     else
@@ -50,11 +73,13 @@ class Track < ApplicationRecord
       ranges.each do |r|
         selected = tracks.select {|t| r.include? t[attr]}
         selected.each do |t|
-          print("%d\t%s_%s\n" % [t.id, attr, r.to_s])
+          counts += 1
+          f.write("%d\t%s_%s\n" % [t.id, attr, r.to_s])
         end
       end
     end
-    return nil
+    puts attr + ": " + counts.to_s
+    return counts
   end
 
   def self.print_track_feature_statistics(counts)
