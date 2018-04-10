@@ -4,12 +4,16 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
-  def self.statistics #(counts)
+  def self.statistics(counts)
     attrs = ["acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
 
-    tracks_query = Track.select(attrs).where.not('tempo' => nil) #.limit(counts)
-    tracks = tracks_query.to_a
+    # tracks_query = Track.select(attrs).where.not('tempo' => nil) #.limit(counts)
+    # tracks = tracks_query.to_a
+    tracks_list = Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list }
+    tracks = tracks_list.flatten.to_set.to_a
     tracks.extend(DescriptiveStatistics)
+
+    puts tracks.count
 
     all_stats = Hash.new
     attrs.each do |attr|
@@ -32,9 +36,7 @@ class Track < ApplicationRecord
       all_stats[attr] = stats
     end
 
-    # return all_stats
-
-    f = File.open("public/track_stats.txt", "w")
+    f = File.open("public/track_stats_%d.txt" % counts, "w")
     f.write(all_stats.to_json)
   end
 
@@ -60,7 +62,7 @@ class Track < ApplicationRecord
       if t.id % 1000 == 0 then
         self.speed
       end
-      
+
     end
   end
 
