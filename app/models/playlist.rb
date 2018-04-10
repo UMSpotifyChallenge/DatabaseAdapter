@@ -18,11 +18,11 @@ class Playlist < ApplicationRecord
   end
 
   def self.print_popularity
-    f = File.open("public/playlist_num_followers.txt", "w")
-    Playlist.select(:id, :num_followers).order(num_followers: :desc).each do |p|
-      f.write("%d\n" % p.num_followers)
-    end
-    f.close
+    # f = File.open("public/playlist_num_followers.txt", "w")
+    # Playlist.select(:id, :num_followers).order(num_followers: :desc).each do |p|
+    #   f.write("%d\n" % p.num_followers)
+    # end
+    # f.close
 
     f = File.open("public/track_num_appearances.txt", "w")
     Track.select(:id, :num_appearances).order(num_appearances: :desc).each do |t|

@@ -4,6 +4,37 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
+  def self.statistics
+    attrs = ["acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
+
+    tracks_query = Track.select(attrs).where.not('tempo' => nil)
+    tracks = tracks_query.to_a
+    tracks.extend(DescriptiveStatistics)
+
+    all_stats = Hash.new
+    attrs.each do |attr|
+      sym = attr.to_sym
+      stats = {
+               # :min => tracks.min(&sym),
+               # :max => tracks.max(&sym),
+               # :mean => tracks.mean(&sym),
+               :median => tracks.median(&sym),
+               :q1 => tracks.percentile(25, &sym),
+               :q2 => tracks.percentile(50, &sym),
+               :q3 => tracks.percentile(75, &sym),
+               :standard_deviation => tracks.standard_deviation(&sym)
+      }
+      stats[:min] = tracks_query.minimum(sym)
+      stats[:max] = tracks_query.maximum(sym)
+      stats[:average] = tracks_query.average(sym).to_f
+      all_stats[attr] = stats
+      puts all_stats
+    end
+
+    f = File.open("public/track_stats.txt", "w")
+    f.write(all_stats.to_json)
+  end
+
   def self.load_hadoop_result
 
     puts ("HashStart:" + Time.current.to_s)
