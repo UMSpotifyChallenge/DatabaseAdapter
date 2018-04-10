@@ -17,6 +17,34 @@ class Playlist < ApplicationRecord
     print "\n"
   end
 
+  def self.print_popularity
+    f = File.open("public/playlist_num_followers.txt", "w")
+    Playlist.select(:id, :num_followers).order(num_followers: :desc).each do |p|
+      f.write("%d\n" % p.num_followers)
+    end
+    f.close
+
+    f = File.open("public/track_num_appearances.txt", "w")
+    Track.select(:id, :num_appearances).order(num_appearances: :desc).each do |t|
+      f.write("%d\n" % t.num_appearances)
+    end
+    f.close
+  end
+
+  def self.print_unique_track_counts
+    f = File.open("public/size_vs_unique_tracks.txt", "w")
+
+    [10, 100, 1000, 10000, 100000, 1000000].each do |i|
+      puts i
+      tracks_list = get_popular_playlists(i,false)
+      unique_tracks = get_unique_tracks tracks_list
+      unique_counts = unique_tracks.count
+      last_num_followers = Playlist.find(i).num_followers
+
+      f.write("1~%d(%d)\t%d\n" % [i, last_num_followers, unique_counts])
+    end
+  end
+
   def self.get_popular_playlists(counts, with_name)
     if with_name
       return Playlist.order(num_followers: :desc).limit(counts).map do |p|
