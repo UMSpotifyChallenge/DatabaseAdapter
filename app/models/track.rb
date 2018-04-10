@@ -4,13 +4,96 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
-  def self.statistics(counts)
+  def self.in_popular_playlists(counts)
+    attrs = ["id", "acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
+
+    tracks_list = Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list.select(attrs).where.not('tempo' => nil) }
+    tracks = tracks_list.flatten.to_set.to_a
+
+    return tracks
+  end
+
+  def self.to_csv(ary)
+    result = ""
+    ary.each {|i| result += ",%s" % i.to_s }
+    result += "\n"
+    return result[1..-1]
+  end
+
+  def self.print_tracks_in_csv(counts)
+    f = File.open("public/track_features_%d.csv" % counts, "w")
+    tracks = in_popular_playlists counts
+
+    attrs = ["id", "acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
+    csv = to_csv attrs
+    f.write csv
+
+    tracks.each do |t|
+      as_ary = attrs.map {|a| t[a] }
+      csv = to_csv as_ary
+      f.write csv
+    end
+
+    return nil
+  end
+
+  def self.get_hyperedges_of_feature(tracks, attr, splits, discrete)
+    if discrete
+      splits.each do |s|
+        selected = tracks.select {|t| t[attr] == s}
+        selected.each do |t|
+          print("%d\t%s_%d\n" % [t.id, attr, s])
+        end
+      end
+    else
+      ranges = (0...(splits.count-1)).map {|i| splits[i]...splits[i + 1]}
+      ranges.each do |r|
+        selected = tracks.select {|t| r.include? t[attr]}
+        selected.each do |t|
+          print("%d\t%s_%s\n" % [t.id, attr, r.to_s])
+        end
+      end
+    end
+    return nil
+  end
+
+  def self.print_track_feature_statistics(counts)
+    f = File.open("public/track_statistics_%d.csv" % counts, "w")
+    tracks = in_popular_playlists counts
+    tracks.extend(DescriptiveStatistics)
+
+    attrs = ["acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
+    # tracks_query = Track.select(attrs).where.not('tempo' => nil)
+    # tracks = tracks_query.to_a
+
+    attrs.each do |attr|
+      sym = attr.to_sym
+      f.write(attr + ",")
+      values = DescriptiveStatistics::Support::convert(tracks, &sym)
+      f.write(values.mean.to_s + ",")
+      f.write(values.standard_deviation.to_s + ",")
+      f.write(values.min.to_s + ",")
+      f.write(values.max.to_s + ",")
+      f.write(values.percentile(10).to_s + ",")
+      f.write(values.percentile(20).to_s + ",")
+      f.write(values.percentile(30).to_s + ",")
+      f.write(values.percentile(40).to_s + ",")
+      f.write(values.percentile(50).to_s + ",")
+      f.write(values.percentile(60).to_s + ",")
+      f.write(values.percentile(70).to_s + ",")
+      f.write(values.percentile(80).to_s + ",")
+      f.write(values.percentile(90).to_s + "\n")
+    end
+
+  end
+
+  def self.statistics
     attrs = ["acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
 
-    # tracks_query = Track.select(attrs).where.not('tempo' => nil) #.limit(counts)
-    # tracks = tracks_query.to_a
-    tracks_list = Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list }
-    tracks = tracks_list.flatten.to_set.to_a
+    tracks_query = Track.select(attrs).where.not('tempo' => nil) #.limit(counts)
+    tracks = tracks_query.to_a
+    # tracks_list = Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list }
+    # tracks = tracks_list.flatten.to_set.to_a
     tracks.extend(DescriptiveStatistics)
 
     puts tracks.count
