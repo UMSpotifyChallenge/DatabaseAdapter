@@ -40,7 +40,7 @@ class Track < ApplicationRecord
   def self.print_hyperedges(counts)
     tracks = in_popular_playlists counts
     
-    f = File.open("public/hypergraph_%d_tracks(%d).txt" % [counts, tracks.count], "w")
+    f = File.open("public/tracks_%d(%d).txt" % [counts, tracks.count], "w")
     tracks.each do |t|
       f.write("%d\n" % t.id)
     end
@@ -48,15 +48,15 @@ class Track < ApplicationRecord
 
     path = "hyperedges_%d" % tracks.count
 
-    print_hyperedges_of_feature(path, tracks, "acousticness", [0, 0.01, 0.3, 0.622, 1], false)
-    print_hyperedges_of_feature(path, tracks, "danceability", [0, 0.403, 0.575, 0.747, 1], false)
-    print_hyperedges_of_feature(path, tracks, "energy", [0, 0.368,	0.613,	0.859, 1], false)
-    print_hyperedges_of_feature(path, tracks, "instrumentalness", [0, 1e-6,	0.002, 0.686, 1], false)
-    print_hyperedges_of_feature(path, tracks, "liveness", [0, 0.028, 0.195, 0.363,1], false)
+    print_hyperedges_of_feature(path, tracks, "acousticness", [0, 0.01, 0.3, 0.622, 1.1], false)
+    print_hyperedges_of_feature(path, tracks, "danceability", [0, 0.403, 0.575, 0.747, 1.1], false)
+    print_hyperedges_of_feature(path, tracks, "energy", [0, 0.368,	0.613,	0.859, 1.1], false)
+    print_hyperedges_of_feature(path, tracks, "instrumentalness", [0, 1e-6,	0.002, 0.686, 1.1], false)
+    print_hyperedges_of_feature(path, tracks, "liveness", [0, 0.028, 0.195, 0.363,1.1], false)
     print_hyperedges_of_feature(path, tracks, "loudness", [-60, -13.44, -8.36, -3.28, 4], false)
-    print_hyperedges_of_feature(path, tracks, "speechiness", [0, 0.04, 0.093,	0.210,1], false)
+    print_hyperedges_of_feature(path, tracks, "speechiness", [0, 0.04, 0.093,	0.210,1.1], false)
     print_hyperedges_of_feature(path, tracks, "tempo", [0, 91.104,	120.717, 150.330, 250], false)
-    print_hyperedges_of_feature(path, tracks, "valence", [0, 0.219, 0.475, 0.731, 1], false)
+    print_hyperedges_of_feature(path, tracks, "valence", [0, 0.219, 0.475, 0.731, 1.1], false)
     print_hyperedges_of_feature(path, tracks, "key", (0...12).to_a, true)
     print_hyperedges_of_feature(path, tracks, "mode", [0,1], true)
     print_hyperedges_of_feature(path, tracks, "time_signature", (0..5).to_a, true)
