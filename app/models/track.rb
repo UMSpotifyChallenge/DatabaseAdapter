@@ -4,32 +4,35 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
-  def self.statistics
+  def self.statistics(counts)
     attrs = ["acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
 
-    tracks_query = Track.select(attrs).where.not('tempo' => nil)
+    tracks_query = Track.select(attrs).where.not('tempo' => nil).limit(counts)
     tracks = tracks_query.to_a
     tracks.extend(DescriptiveStatistics)
 
     all_stats = Hash.new
     attrs.each do |attr|
       sym = attr.to_sym
+      values = DescriptiveStatistics::Support::convert(tracks, &sym)
       stats = {
-               # :min => tracks.min(&sym),
-               # :max => tracks.max(&sym),
-               # :mean => tracks.mean(&sym),
-               :median => tracks.median(&sym),
-               :p20 => tracks.percentile(20, &sym),
-               :p40 => tracks.percentile(40, &sym),
-               :p60 => tracks.percentile(60, &sym),
-               :p80 => tracks.percentile(80, &sym),
-               :standard_deviation => tracks.standard_deviation(&sym)
+               :min => values.min,
+               :max => values.max,
+               :average => values.mean,
+               :median => values.median,
+               :p20 => values.percentile(20),
+               :p40 => values.percentile(40),
+               :p60 => values.percentile(60),
+               :p80 => values.percentile(80),
+               :standard_deviation => values.standard_deviation
       }
-      stats[:min] = tracks_query.minimum(sym)
-      stats[:max] = tracks_query.maximum(sym)
-      stats[:average] = tracks_query.average(sym).to_f
+      # stats[:min] = tracks_query.minimum(sym)
+      # stats[:max] = tracks_query.maximum(sym)
+      # stats[:average] = tracks_query.average(sym).to_f
       all_stats[attr] = stats
     end
+
+    # return all_stats
 
     f = File.open("public/track_stats.txt", "w")
     f.write(all_stats.to_json)
