@@ -19,16 +19,16 @@ class Track < ApplicationRecord
                # :max => tracks.max(&sym),
                # :mean => tracks.mean(&sym),
                :median => tracks.median(&sym),
-               :q1 => tracks.percentile(25, &sym),
-               :q2 => tracks.percentile(50, &sym),
-               :q3 => tracks.percentile(75, &sym),
+               :p20 => tracks.percentile(20, &sym),
+               :p40 => tracks.percentile(40, &sym),
+               :p60 => tracks.percentile(60, &sym),
+               :p80 => tracks.percentile(80, &sym),
                :standard_deviation => tracks.standard_deviation(&sym)
       }
       stats[:min] = tracks_query.minimum(sym)
       stats[:max] = tracks_query.maximum(sym)
       stats[:average] = tracks_query.average(sym).to_f
       all_stats[attr] = stats
-      puts all_stats
     end
 
     f = File.open("public/track_stats.txt", "w")
