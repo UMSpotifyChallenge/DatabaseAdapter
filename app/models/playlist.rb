@@ -83,13 +83,36 @@ class Playlist < ApplicationRecord
       p.each {|t| f.write("%s " % t)}
       f.write("\n")
     end
+    f.close
   end
 
   def self.prepare_hon(size, with_name)
-    path = "popular_%d.txt" % size
-    tracks = get_popular_playlists(size, with_name)
-    puts "Tracks loaded"
-    write_hon_data(tracks, path)
+    plists = get_popular_playlists(size, with_name)
+    puts "playlists loaded"
+
+    training = []
+    testing = []
+    plists.each_with_index {|p, i|
+      if i % 10 == 0
+        testing.append p
+      else
+        training.append p
+      end
+    }
+    puts "Playlists splitted to training and testing."
+
+    write_hon_data(training, "hon_training_%d.txt" % size)
+
+    testing_hash = testing.map do |tracks_list|
+      hidden_count = tracks_list.count * 3 / 10
+      hidden = tracks_list.sample(hidden_count)
+      seed = tracks_list - hidden
+      {"seed"=>seed, "hidden"=>hidden}
+    end
+
+    f = File.open("public/hon_testing_%d.txt" % size, "w")
+    f.write(testing_hash.to_json)
+    f.close
   end
 
   def self.compute_start
