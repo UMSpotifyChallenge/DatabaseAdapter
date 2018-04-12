@@ -93,9 +93,7 @@ class Playlist < ApplicationRecord
     training = []
     testing = []
     testing_mod = rand(5)
-    # 80/20
-    # 50/50
-
+    
     plists.each_with_index {|p, i|
       if i % 5 == testing_mod
         testing.append p
