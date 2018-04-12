@@ -47,11 +47,11 @@ class Playlist < ApplicationRecord
 
   def self.get_popular_playlists(counts, with_name)
     if with_name
-      return Playlist.order(num_followers: :desc).limit(counts).map do |p|
+      return Playlist.limit(counts).map do |p|
         p.track_list.pluck(:id, :name).map {|ary| "%d_%s" % [ary[0], ary[1][0..15].parameterize.underscore]}
       end
     else
-      return Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list.pluck(:id) }
+      return Playlist.limit(counts).map {|p| p.track_list.pluck(:id) }
     end
   end
 
@@ -92,9 +92,12 @@ class Playlist < ApplicationRecord
 
     training = []
     testing = []
-    testing_mod = rand(10)
+    testing_mod = rand(5)
+    # 80/20
+    # 50/50
+
     plists.each_with_index {|p, i|
-      if i % 10 == testing_mod
+      if i % 5 == testing_mod
         testing.append p
       else
         training.append p
@@ -105,7 +108,7 @@ class Playlist < ApplicationRecord
     write_hon_data(training, "hon_training_%d.txt" % size)
 
     testing_hash = testing.map do |tracks_list|
-      hidden_count = tracks_list.count * 3 / 10
+      hidden_count = tracks_list.count / 2
       hidden = tracks_list.sample(hidden_count)
       seed = tracks_list - hidden
       {"seed"=>seed, "hidden"=>hidden}
