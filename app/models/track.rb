@@ -9,7 +9,7 @@ class Track < ApplicationRecord
   def self.in_popular_playlists(counts)
     attrs = @attrs
 
-    tracks_list = Playlist.limit(counts).map {|p| p.track_list.select(attrs).where.not('tempo' => nil) }
+    tracks_list = Playlist.limit(counts).map {|p| p.track_list.select(attrs) }
     tracks = tracks_list.flatten.to_set.to_a
 
     return tracks
