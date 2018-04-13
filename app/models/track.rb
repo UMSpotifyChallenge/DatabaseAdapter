@@ -4,10 +4,12 @@ class Track < ApplicationRecord
   has_many :includes, :foreign_key => "track_id", :dependent => :destroy
   has_many :playlists, :through => :includes, :source => :playlist
 
+  @attrs = ["id", "album_id", "acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
+  
   def self.in_popular_playlists(counts)
-    attrs = ["id", "acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
+    attrs = @attrs
 
-    tracks_list = Playlist.order(num_followers: :desc).limit(counts).map {|p| p.track_list.select(attrs).where.not('tempo' => nil) }
+    tracks_list = Playlist.limit(counts).map {|p| p.track_list.select(attrs).where.not('tempo' => nil) }
     tracks = tracks_list.flatten.to_set.to_a
 
     return tracks
@@ -24,7 +26,7 @@ class Track < ApplicationRecord
     f = File.open("public/track_features_%d.csv" % counts, "w")
     tracks = in_popular_playlists counts
 
-    attrs = ["id", "acousticness", "danceability", "duration_ms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness", "tempo", "time_signature", "valence"]
+    attrs = @attrs
     csv = to_csv attrs
     f.write csv
 
@@ -39,27 +41,30 @@ class Track < ApplicationRecord
 
   def self.print_hyperedges(counts)
     tracks = in_popular_playlists counts
-    
-    f = File.open("public/tracks_%d(%d).txt" % [counts, tracks.count], "w")
+
+    attrs = tracks[0].attribute_names
+    f = File.open("public/tracks_%d(%d).csv" % [counts, tracks.count], "w")
+    f.write(to_csv attrs)
     tracks.each do |t|
-      f.write("%d\n" % t.id)
+      values = attrs.map {|a| t[a]}
+      f.write(to_csv values)
     end
     f.close
 
-    path = "hyperedges_%d" % tracks.count
-
-    print_hyperedges_of_feature(path, tracks, "acousticness", [0, 0.01, 0.3, 0.622, 1.1], false)
-    print_hyperedges_of_feature(path, tracks, "danceability", [0, 0.403, 0.575, 0.747, 1.1], false)
-    print_hyperedges_of_feature(path, tracks, "energy", [0, 0.368,	0.613,	0.859, 1.1], false)
-    print_hyperedges_of_feature(path, tracks, "instrumentalness", [0, 1e-6,	0.002, 0.686, 1.1], false)
-    print_hyperedges_of_feature(path, tracks, "liveness", [0, 0.028, 0.195, 0.363,1.1], false)
-    print_hyperedges_of_feature(path, tracks, "loudness", [-60, -13.44, -8.36, -3.28, 4], false)
-    print_hyperedges_of_feature(path, tracks, "speechiness", [0, 0.04, 0.093,	0.210,1.1], false)
-    print_hyperedges_of_feature(path, tracks, "tempo", [0, 91.104,	120.717, 150.330, 250], false)
-    print_hyperedges_of_feature(path, tracks, "valence", [0, 0.219, 0.475, 0.731, 1.1], false)
-    print_hyperedges_of_feature(path, tracks, "key", (0...12).to_a, true)
-    print_hyperedges_of_feature(path, tracks, "mode", [0,1], true)
-    print_hyperedges_of_feature(path, tracks, "time_signature", (0..5).to_a, true)
+    # path = "hyperedges_%d" % tracks.count
+    #
+    # print_hyperedges_of_feature(path, tracks, "acousticness", [0, 0.01, 0.3, 0.622, 1.1], false)
+    # print_hyperedges_of_feature(path, tracks, "danceability", [0, 0.403, 0.575, 0.747, 1.1], false)
+    # print_hyperedges_of_feature(path, tracks, "energy", [0, 0.368,	0.613,	0.859, 1.1], false)
+    # print_hyperedges_of_feature(path, tracks, "instrumentalness", [0, 1e-6,	0.002, 0.686, 1.1], false)
+    # print_hyperedges_of_feature(path, tracks, "liveness", [0, 0.028, 0.195, 0.363,1.1], false)
+    # print_hyperedges_of_feature(path, tracks, "loudness", [-60, -13.44, -8.36, -3.28, 4], false)
+    # print_hyperedges_of_feature(path, tracks, "speechiness", [0, 0.04, 0.093,	0.210,1.1], false)
+    # print_hyperedges_of_feature(path, tracks, "tempo", [0, 91.104,	120.717, 150.330, 250], false)
+    # print_hyperedges_of_feature(path, tracks, "valence", [0, 0.219, 0.475, 0.731, 1.1], false)
+    # print_hyperedges_of_feature(path, tracks, "key", (0...12).to_a, true)
+    # print_hyperedges_of_feature(path, tracks, "mode", [0,1], true)
+    # print_hyperedges_of_feature(path, tracks, "time_signature", (0..5).to_a, true)
   end
 
   def self.print_hyperedges_of_feature(path_prefix, tracks, attr, splits, discrete)
