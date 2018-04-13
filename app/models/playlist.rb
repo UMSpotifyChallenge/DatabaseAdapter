@@ -86,6 +86,11 @@ class Playlist < ApplicationRecord
     f.close
   end
 
+  def self.write_playlists(size)
+    plists = get_popular_playlists(size, false)
+    write_hon_data(plists, "playlists_%d.txt" % size)
+  end
+
   def self.prepare_hon(size, with_name)
     plists = get_popular_playlists(size, with_name)
     puts "playlists loaded"
