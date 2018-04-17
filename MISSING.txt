@@ -1,0 +1,64 @@
+cat public/data/mpd.slice.578000-578999.json_done | grep 'Un Angel se Divisa'
+
+2.4.1 :001 > Playlist.find(31278).includes.last(5).each {|i| puts i.track.name}
+   (0.4ms)  SET NAMES utf8,  @@SESSION.sql_mode = CONCAT(CONCAT(@@sql_mode, ',STRICT_ALL_TABLES'), ',NO_AUTO_VALUE_ON_ZERO'),  @@SESSION.sql_auto_is_null = 0, @@SESSION.wait_timeout = 2147483
+  Playlist Load (0.9ms)  SELECT  `playlists`.* FROM `playlists` WHERE `playlists`.`id` = 31278 LIMIT 1
+  Include Load (9558.8ms)  SELECT  `includes`.* FROM `includes` WHERE `includes`.`playlist_id` = 31278 ORDER BY `includes`.`id` DESC LIMIT 5
+  Track Load (1.0ms)  SELECT  `tracks`.* FROM `tracks` WHERE `tracks`.`id` = 2103880 LIMIT 1
+Lolo Felix
+  Track Load (0.6ms)  SELECT  `tracks`.* FROM `tracks` WHERE `tracks`.`id` = 1903944 LIMIT 1
+Arsenal Efectivo
+  Track Load (0.3ms)  SELECT  `tracks`.* FROM `tracks` WHERE `tracks`.`id` = 170604 LIMIT 1
+Tali 50
+  Track Load (0.3ms)  SELECT  `tracks`.* FROM `tracks` WHERE `tracks`.`id` = 140985 LIMIT 1
+Soy Ayon
+  Track Load (0.3ms)  SELECT  `tracks`.* FROM `tracks` WHERE `tracks`.`id` = 961557 LIMIT 1
+El Malo de Culiac\u00e1n
+
+# 31278
+  # public/data/mpd.slice.578000-578999.json_done 
+  # Playlist.find(31278).num_tracks => 203
+  # Playlist.find(31278).tracks.count => 199
+
+[				{
+                    "pos": 199,
+                    "artist_name": "LEGADO 7",
+                    "track_uri": "spotify:track:1dCX74a3IrMtrZu32eL6pt",
+                    "artist_uri": "spotify:artist:7yCGrS6Xh3UngvY6Ad5sMJ",
+                    "track_name": "El Sapo",
+                    "album_uri": "spotify:album:6Lv50sflrykxZObNWvdsQ8",
+                    "duration_ms": 195653,
+                    "album_name": "100% Corridos Verdes"
+                },
+                {
+                    "pos": 200,
+                    "artist_name": "LEGADO 7",
+                    "track_uri": "spotify:track:47CLWDl6LmG2yZqCeClfxs",
+                    "artist_uri": "spotify:artist:7yCGrS6Xh3UngvY6Ad5sMJ",
+                    "track_name": "El CL1",
+                    "album_uri": "spotify:album:6Lv50sflrykxZObNWvdsQ8",
+                    "duration_ms": 168200,
+                    "album_name": "100% Corridos Verdes"
+                },
+                {
+                    "pos": 201,
+                    "artist_name": "Alta Frecuencia",
+                    "track_uri": "spotify:track:0bgZkDwHQoEr1GElt3zDQ2",
+                    "artist_uri": "spotify:artist:3ztZt44vp4f1nwEGD5ImUn",
+                    "track_name": "El Reo",
+                    "album_uri": "spotify:album:25H1CI6JbUY8FNXu03FA1j",
+                    "duration_ms": 195813,
+                    "album_name": "Iniciando un Sue\u00f1o"
+                },
+                {
+                    "pos": 202,
+                    "artist_name": "Chalino Sanchez",
+                    "track_uri": "spotify:track:6EN9SdnSxcMsupvu2gXpfu",
+                    "artist_uri": "spotify:artist:7u9m43vPVTERaALXXOzrRq",
+                    "track_name": "El Sapo",
+                    "album_uri": "spotify:album:7eSapaHWUc7oLjeEAsfz17",
+                    "duration_ms": 248290,
+                    "album_name": "Mas Exitos Con - Chalino Sanchez"
+                }
+                ]
+

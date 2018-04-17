@@ -5,6 +5,160 @@ class Playlist < ApplicationRecord
   serialize :name
   serialize :description
 
+  def track_list
+    # includes = Include.where('id >= ? AND playlist_id = ?', start, id).limit(num_tracks)
+    # return includes # .map {|i| i.track}
+    #  #.order('includes.pos')
+    return Track.joins(:includes).where('includes.id >= ? AND includes.playlist_id = ?', start, id).limit(num_tracks) #.to_ary
+  end
+
+  def print_tracks
+    self.track_list.each {|t| print "%d " % t.id}
+    print "\n"
+  end
+
+  def self.print_popularity
+    # f = File.open("public/playlist_num_followers.txt", "w")
+    # Playlist.select(:id, :num_followers).order(num_followers: :desc).each do |p|
+    #   f.write("%d\n" % p.num_followers)
+    # end
+    # f.close
+
+    f = File.open("public/track_num_appearances.txt", "w")
+    Track.select(:id, :num_appearances).order(num_appearances: :desc).each do |t|
+      f.write("%d\n" % t.num_appearances)
+    end
+    f.close
+  end
+
+  def self.print_unique_track_counts
+    f = File.open("public/size_vs_unique_tracks.txt", "w")
+
+    [10, 100, 1000, 10000, 100000, 1000000].each do |i|
+      puts i
+      tracks_list = get_popular_playlists(i,false)
+      unique_tracks = get_unique_tracks tracks_list
+      unique_counts = unique_tracks.count
+      last_num_followers = Playlist.find(i).num_followers
+
+      f.write("1~%d(%d)\t%d\n" % [i, last_num_followers, unique_counts])
+    end
+  end
+
+  def self.get_popular_playlists(counts, with_name)
+    if with_name
+      return Playlist.limit(counts).map do |p|
+        p.track_list.pluck(:id, :name).map {|ary| "%d_%s" % [ary[0], ary[1][0..15].parameterize.underscore]}
+      end
+    else
+      return Playlist.limit(counts).map {|p| p.track_list.pluck(:id) }
+    end
+  end
+
+  def self.get_unique_tracks(tracks_list)
+    return tracks_list.flatten.to_set.to_a
+  end
+
+  def self.track_id_map(tracks)
+    id_map = Hash.new
+    tracks.each_with_index {|t, i| id_map[t] = i+1}
+    return id_map
+  end
+
+  def self.remapped_tracks_list(tracks_list, id_map)
+    return tracks_list.map {|p| p.map {|t| id_map[t]}}
+  end
+
+  def self.remapped_in_hon_format(tracks_list)
+    tracks = get_unique_tracks(tracks_list)
+    id_map = track_id_map(tracks)
+    remapped = remapped_tracks_list(tracks_list, id_map)
+    return remapped
+  end
+
+  def self.write_hon_data(remapped, path)
+    f = File.open("public/"+path, "w")
+    remapped.each_with_index do |p, i|
+      f.write("%d " % (i+1))
+      p.each {|t| f.write("%s " % t)}
+      f.write("\n")
+    end
+    f.close
+  end
+
+  def self.write_playlists(size)
+    plists = get_popular_playlists(size, false)
+    write_hon_data(plists, "playlists_%d.txt" % size)
+  end
+
+  def self.prepare_hon(size, with_name)
+    plists = get_popular_playlists(size, with_name)
+    puts "playlists loaded"
+
+    training = []
+    testing = []
+    testing_mod = rand(5)
+    
+    plists.each_with_index {|p, i|
+      if i % 5 == testing_mod
+        testing.append p
+      else
+        training.append p
+      end
+    }
+    puts "Playlists splitted to training and testing."
+
+    write_hon_data(training, "hon_training_%d.txt" % size)
+
+    testing_hash = testing.map do |tracks_list|
+      hidden_count = tracks_list.count / 2
+      hidden = tracks_list.sample(hidden_count)
+      seed = tracks_list - hidden
+      {"seed"=>seed, "hidden"=>hidden}
+    end
+
+    f = File.open("public/hon_testing_%d.txt" % size, "w")
+    f.write(testing_hash.to_json)
+    f.close
+  end
+
+  def self.compute_start
+    iid = 1
+    Playlist.find_each do |p|
+      start_include = p.includes.where('id >= ? AND playlist_id = ? AND pos = ?', iid, p.id, 0).first
+      if start_include == nil
+        puts "Order problem"
+        puts p.id
+        start_include = p.includes.where('playlist_id = ? AND pos = ?', p.id, 0).first
+      end
+      if start_include == nil
+        puts "No pos=0"
+        puts p.id
+        start_include = p.includes.first
+      end
+      iid = start_include.id
+      # puts "playlist%d \t %d" % [p.id, iid]
+      p.update_attribute(:start, iid)
+    end
+  end
+
+  def self.speed
+    updated = Playlist.where.not('start' => nil)
+    last_updated = updated.last
+    last_updated_id = last_updated.id
+    first_updated =  Playlist.find(30707)
+
+    puts "%d (%.2f%%)" % [last_updated_id, (last_updated_id / 1000000.0 * 100 )]
+
+    duration = last_updated.updated_at - first_updated.updated_at
+    counting = last_updated_id - first_updated.id
+    speed = counting / duration
+    puts speed
+    remaining = 1000000.0 - last_updated_id
+    time_to_finish = remaining / speed
+    puts last_updated.updated_at.localtime + time_to_finish
+  end
+
   def self.load_mpd_json
     # puts ("HashStart:" + Time.current.to_s)
     # uri_id_map = Hash.new

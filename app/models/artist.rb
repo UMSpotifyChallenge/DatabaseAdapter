@@ -1,4 +1,7 @@
 class Artist < ApplicationRecord
+  has_many :albums
+  has_many :tracks, :through => :albums
+
   def self.load_hadoop_result
     f = File.open("public/mpd_result/artist_output.txt", "r")
     f.each_line do |line|

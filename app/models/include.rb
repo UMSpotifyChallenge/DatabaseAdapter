@@ -7,6 +7,20 @@ class Include < ApplicationRecord
     validates :playlist_id, :presence => true
     validates :track_id, :presence => true
 
+    def self.compute_appearances
+      counts = Array.new(Track.count + 1, 0) # size, default_value
+
+      Include.select(:id, :track_id).find_in_batches(batch_size: 5000) do |includes|
+        includes.each do |i|
+          counts[i.track_id.to_i] += 1
+        end
+      end
+
+      Track.select(:id, :num_appearances).find_each do |t|
+        t.update_attribute(:num_appearances, counts[t.id])
+      end
+    end
+
     def self.speed
         playlist_restart = 64001
         include_restart = 4236165
@@ -19,7 +33,9 @@ class Include < ApplicationRecord
         speed = counting / duration
         puts speed
 
-        for i in 1..10
+        finished = last_p.id / 100000
+
+        for i in (finished+1)..10
             goal = 100000.0*i
             remaining = goal - last_p.id
             time_to_finish = remaining / speed

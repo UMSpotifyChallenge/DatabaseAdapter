@@ -8,6 +8,7 @@ end
 gem 'ffi', '1.9.18'
 gem 'rspotify'
 gem 'bulk_insert'
+gem 'descriptive_statistics', '~> 2.4.0', :require => 'descriptive_statistics/safe'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.5'
